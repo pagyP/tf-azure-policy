@@ -206,4 +206,28 @@ METADATA
 POLICY_RULE
 }
 
-//TODO: Add append, modify and deployIfNotExists examples
+
+
+//deploy if not exists
+
+resource "azurerm_management_group_policy_assignment" "deployifnotexists" {
+    name = "deployifnotexists"
+    management_group_id = var.management_group_id
+    policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/2835b622-407b-4114-9198-6f7064cbe0dc"
+    description = "Deploy if not exists - IaaS Windows Anti Malware Extension"
+    display_name = "Deploy if not exists - IaaS Windows Anti Malware Extension"
+    location = "uksouth"
+    identity {
+        type = "SystemAssigned"
+    }
+    
+}
+
+resource "azurerm_role_assignment" "deployifnotexists" {
+    //scope = azurerm_management_group_policy_assignment.deployifnotexists.id
+    scope = var.management_group_id
+    role_definition_name = "Virtual Machine Contributor"
+    principal_id = azurerm_management_group_policy_assignment.deployifnotexists.identity.0.principal_id
+}
+
+//TODO: Add append, modify examples
