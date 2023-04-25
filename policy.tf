@@ -205,3 +205,5 @@ METADATA
          }
 POLICY_RULE
 }
+
+//TODO: Add append, modify and deployIfNotExists examples
