@@ -124,7 +124,7 @@ resource "azurerm_management_group_policy_assignment" "mandatorytagandvalue" {
     PARAMS
 }
 
-//audit policy
+//audit policy initiative
 resource "azurerm_management_group_policy_assignment" "networkaccessauditpol" {
     name = "networkaccessauditpol"
     management_group_id = var.management_group_id
