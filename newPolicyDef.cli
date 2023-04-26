@@ -1,0 +1,4 @@
+az policy definition create --name enforceroutetablev1 --display-name "Enforce route table on subnet" --description "Enforces existing route table on subnet" --metadata version="0.1.0" category="Network" --mode All --params "@azurepolicy.parameters.json" --rules "@azurepolicy.rules.json" --management-group PolicyWorkshop
+
+Create policy def as above
+use this policy as an example of things that could go wrong
