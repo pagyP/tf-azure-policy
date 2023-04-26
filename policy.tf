@@ -206,11 +206,34 @@ METADATA
 POLICY_RULE
 }
 
+resource "azurerm_management_group_policy_assignment" "sqlvulnassessment" {
+    name = "sqlvulnassessment"
+    management_group_id = var.management_group_id
+    policy_definition_id = azurerm_policy_definition.sqlvulnassessment.id
+    description = "Enables SQL Vulnerability Assessment on all SQL Servers in the subscription"
+    display_name = "SQL Vulnerability Assessment-Custom-TF"
+    location = "uksouth"
+    identity {
+        type = "SystemAssigned"
+    }
+    
+}
 
+resource "azurerm_role_assignment" "sqlvulnassessment" {
+    scope = var.management_group_id
+    role_definition_name = "Monitoring Contributor"
+    principal_id = azurerm_management_group_policy_assignment.sqlvulnassessment.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "sqlvulnassessment1" {
+    scope = var.management_group_id
+    role_definition_name = "SQL Security Manager"
+    principal_id = azurerm_management_group_policy_assignment.sqlvulnassessment.identity[0].principal_id
+}
 
 //deploy if not exists
 
-resource "azurerm_management_group_policy_assignment" "deployifnotexists" {
+resource "azurerm_management_group_policy_assignment" "deployifnotexistsiaasmalwareextension" {
     name = "deployifnotexists"
     management_group_id = var.management_group_id
     policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/2835b622-407b-4114-9198-6f7064cbe0dc"
@@ -223,11 +246,63 @@ resource "azurerm_management_group_policy_assignment" "deployifnotexists" {
     
 }
 
-resource "azurerm_role_assignment" "deployifnotexists" {
+resource "azurerm_role_assignment" "windowsiaasmalwareextension" {
     //scope = azurerm_management_group_policy_assignment.deployifnotexists.id
     scope = var.management_group_id
     role_definition_name = "Virtual Machine Contributor"
-    principal_id = azurerm_management_group_policy_assignment.deployifnotexists.identity.0.principal_id
+    principal_id = azurerm_management_group_policy_assignment.deployifnotexistsiaasmalwareextension.identity.0.principal_id
 }
 
-//TODO: Add append, modify examples
+
+
+resource "azurerm_management_group_policy_assignment" "inherittagfromsub" {
+    name = "inherittagfromsubs"
+    management_group_id = var.management_group_id
+    policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/40df99da-1232-49b1-a39a-6da8d878f469"
+    description = "Inherit SubType Tag and value from subscription"
+    display_name = "Inherit SubType Tag and value from subscription"
+    location = "uksouth"
+    parameters           = <<PARAMS
+    {
+        "tagName": {
+        "value": "SubType"
+        }
+    }
+    PARAMS
+    identity {
+        type = "SystemAssigned"
+    }
+    
+}
+
+resource "azurerm_role_assignment" "inherittagfromsub" {
+    //scope = azurerm_management_group_policy_assignment.deployifnotexists.id
+    scope = var.management_group_id
+    role_definition_name = "Contributor"
+    principal_id = azurerm_management_group_policy_assignment.inherittagfromsub.identity.0.principal_id
+}
+
+//TODO: Add append
+
+resource "azurerm_management_group_policy_assignment" "appendtagtorg" {
+    name = "appendtorg"
+    management_group_id = var.management_group_id
+    policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/49c88fc8-6fd1-46fd-a676-f12d1d3a4c71"
+    description = "Append tag to RG"
+    display_name = "Append tag to rg"
+    location = "uksouth"
+    parameters           = <<PARAMS
+    {
+        "tagName": {
+        "value": "AppendTag"
+        },
+        "tagValue": {
+         "value": "AppendValue"
+        }
+    }
+    PARAMS
+   #  identity {
+   #      type = "SystemAssigned"
+   #  }
+    
+}
