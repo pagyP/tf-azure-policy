@@ -306,3 +306,26 @@ resource "azurerm_management_group_policy_assignment" "appendtagtorg" {
    #  }
     
 }
+
+
+resource "azurerm_management_group_policy_assignment" "allowedstoragetypes" {
+  name                 = "allowedstoragetypes"
+  management_group_id  = var.management_group_id
+  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/7433c107-6db4-4ad1-b57a-a76dce0154a1"
+  description          = "Allowed storage types"
+  display_name         = "Allowed storage types"
+  enforce              = true //set to true to enforce policy.  For deny policies this means the action will be denied
+  parameters           = <<PARAMS
+    {
+        "listOfAllowedSKUs": {
+        "value": [
+            "Standard_LRS"
+        ]
+        },
+         "effect": {
+         "value": "Audit"
+    }
+    }
+    
+    PARAMS
+}
