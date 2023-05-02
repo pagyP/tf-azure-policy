@@ -68,7 +68,7 @@ resource "azurerm_management_group_policy_assignment" "allowed_locations" {
 
 //TAGS
 
-//deny resource if tag is not present
+//deny resource if tag is not present  note the effect deny is redundant here as that is the only effect in the policy defintion
 resource "azurerm_management_group_policy_assignment" "envtagging" {
   name                 = "EnvironmentTag"
   management_group_id  = var.management_group_id
@@ -80,7 +80,10 @@ resource "azurerm_management_group_policy_assignment" "envtagging" {
     {
         "tagName": {
         "value": "Environment"
-        }
+        },
+        effect": {
+            "value": "deny"
+            }
     }
     
     PARAMS
